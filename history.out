@@ -1,0 +1,84 @@
+    1  hostnamectl --static
+    2  cat /etc/os-release
+    3  lsblk
+    4  ping -c 4 8.8.8.8 > ~/ping.out
+    5  cat ~/ping.out
+    6  dnf check-update
+    7  dnf update -y
+    8  uname -r
+    9  ls /boot/vmlinuz-*
+   10  history -a
+   11  ip -br a
+   12  reboot
+   13  uname -r
+   14  dnf check-update
+   15  echo $?
+   16  dnf history | head -5
+   17  dnf download tcpdump --destdir=/tmp
+   18  rpm -ivh /tmp/tcpdump*.rpm
+   19  rpm -q tcpdump
+   20  dnf history > ~/dnf.out
+   21  parted -s /dev/vdb mklabel gpt mkpart primary ext4 0% 100%
+   22  lsblk /dev/vdb
+   23  mkfs.ext4 -L MEPHI_WEB /dev/vdb1
+   24  blkid /dev/vdb1
+   25  parted /dev/vdb print
+   26  mkdir /mephi-web
+   27  echo 'LABEL=MEPHI_WEB  /mephi-web  ext4  defaults  0  2' >> /etc/fstab
+   28  systemctl daemon-reload
+   29  mount /mephi-web
+   30  findmnt /mephi-web
+   31  df -h /mephi-web
+   32  dnf install -y nginx libcap-ng-utils
+   33  rpm -q nginx libcap-ng-utils
+   34  dnf history > ~/dnf.out
+   35  nginx -t
+   36  systemctl enable --now nginx
+   37  systemctl is-active nginx
+   38  systemctl is-enabled nginx
+   39  curl -I http://localhost/
+   40  journalctl -u nginx -b > ~/journalctl.out
+   41  mkdir -p /data/mephi-2026
+   42  groupadd team
+   43  useradd -u 5501 -g team user1
+   44  passwd user1
+   45  useradd -u 5502 -g team user2
+   46  useradd -u 5503 -g team user3
+   47  passwd user2
+   48  passwd user3
+   49  id user1
+   50  id user2
+   51  id user3
+   52  groupadd -g 4444 curators
+   53  useradd -g curators curator1
+   54  useradd -g curators curator2
+   55  passwd curator1
+   56  getent group curators
+   57  chown root:team /data/mephi-2026
+   58  chmod 2770 /data/mephi-2026
+   59  setfacl -R  -m g:curators:rX /data/mephi-2026
+   60  setfacl -R -d -m g:curators:rX /data/mephi-2026
+   61  history > history.out
+   62  sudo setcap 'cap_net_admin,cap_net_raw=eip' /usr/sbin/tcpdump
+   63  ls -l /usr/sbin/tcpdump
+   64  chmod u-s /usr/sbin/tcpdump
+   65  sudo -u user1 tcpdump -c 2 -i any
+   66  getenforce
+   67  echo "Hello from Student: М265854" > /mephi-web/index.html
+   68  grep -n "/usr/share/nginx/html" /etc/nginx/nginx.conf
+   69  sed -i '41s|.*|root /mephi-web;|' /etc/nginx/nginx.conf
+   70  nginx -t
+   71  systemctl restart nginx
+   72  dnf install -y policycoreutils-python-utils
+   73  command -v semanage
+   74  semanage fcontext -a -t httpd_sys_content_t "/mephi-web(/.*)?"
+   75  restorecon -Rv /mephi-web
+   76  curl http://localhost
+   77  grep pam_access /etc/pam.d/login
+   78  grep -n '^account' /etc/pam.d/login
+   79  sed -i '4a account required pam_access.so' /etc/pam.d/login
+   80  echo "-:curators:LOCAL" >> /etc/security/access.conf
+   81  for u in user1 user2 user3 curator1 curator2; do chage -M 90 "$u"; done
+   82  vi /etc/security/pwquality.conf
+   83  curl http://localhost/
+   84  history > ~/history.out
